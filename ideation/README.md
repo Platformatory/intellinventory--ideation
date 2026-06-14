@@ -113,3 +113,4 @@ Out of scope.
 
 # Read Further
 - [`problem-statement-and-architecture-proposal.md`](./problem-statement-and-architecture-proposal.md)
+- [`architecture`](./architecture)

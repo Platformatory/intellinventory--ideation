@@ -1,57 +1,44 @@
-<h1>Architecture Modules</h1>
+<h1><code>Eng</code> (Engine) - V1</h1>
 
 ---
 
 **Contents**:
 
-- [Notation Guide](#notation-guide)
-- [`Eng` (Engine)](#eng-engine)
-  - [`Eng.Scheduler` (Scheduler)](#engscheduler-scheduler)
-  - [`Eng.Mon` (Monitoring)](#engmon-monitoring)
-    - [`Eng.Mon._envIF`](#engmon_envif)
-  - [`Eng.AD` (Agent Decision)](#engad-agent-decision)
-    - [`Eng._FC` (Forecast Context)](#eng_fc-forecast-context)
-    - [`Eng.buildFC` (Build Context)](#engbuildfc-build-context)
-      - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
-    - [`Eng.AD.adReq` (Agent Decision Request)](#engadadreq-agent-decision-request)
-  - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
-    - [`Eng.AD.adResCheck` (Agent Decision Response Check)](#engadadrescheck-agent-decision-response-check)
-  - [`Eng._D-1` (Engine Decision Object - V1)](#eng_d-1-engine-decision-object---v1)
-  - [`Eng.HD` (Human Decision)](#enghd-human-decision)
-    - [`Eng.HD.hdReq` (Human Decision Request)](#enghdhdreq-human-decision-request)
-    - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue-1)
-    - [`Eng.HD.hdResCheck` (Human Decision Response Check)](#enghdhdrescheck-human-decision-response-check)
-    - [`Eng.Mon._envIF`](#engmon_envif-1)
-  - [`Eng.Exec` (Executor)](#engexec-executor)
-- [`RM` (Reasoning Model)](#rm-reasoning-model)
-- [`HITL` (Human-in-the-Loop)](#hitl-human-in-the-loop)
+- [Diagram](#diagram)
+- [`Eng.Scheduler` (Scheduler)](#engscheduler-scheduler)
+- [`Eng.Mon` (Monitoring)](#engmon-monitoring)
+  - [`Eng.Mon._envIF`](#engmon_envif)
+- [`Eng.AD` (Agent Decision)](#engad-agent-decision)
+  - [`Eng._FC` (Forecast Context)](#eng_fc-forecast-context)
+  - [`Eng.buildFC` (Build Context)](#engbuildfc-build-context)
+  - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
+  - [`Eng.AD.adReq` (Agent Decision Request)](#engadadreq-agent-decision-request)
+- [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
+  - [`Eng.AD.adResCheck` (Agent Decision Response Check)](#engadadrescheck-agent-decision-response-check)
+- [`Eng._D-1` (Engine Decision Object - V1)](#eng_d-1-engine-decision-object---v1)
+- [`Eng.HD` (Human Decision)](#enghd-human-decision)
+  - [`Eng.HD.hdReq` (Human Decision Request)](#enghdhdreq-human-decision-request)
+  - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue-1)
+  - [`Eng.HD.hdResCheck` (Human Decision Response Check)](#enghdhdrescheck-human-decision-response-check)
+  - [`Eng.Mon._envIF`](#engmon_envif-1)
+- [`Eng.Exec` (Executor)](#engexec-executor)
 
 ---
 
-# Notation Guide
-| Representation | Represents |
-| --- | --- |
-| Starts with uppercase (no underscore prefix) | Module/Submodule |
-| Starts with lowercase (no underscore prefix) | Functionality/Task |
-| Starts with uppercase (underscore prefix) | Data |
-| Starts with lowercase (underscore prefix) | Requirement |
-| Dot (`.`) | Separation; broader-to-narrower = left-to-right |
-| Hyphen + Number | Version |
-
-# `Eng` (Engine)
+# Diagram
 Diagram (details are given in the following sections)
 
-![](./_resources/engine-architecture-v1.png)
+![](../_resources/engine-architecture-v1.png)
 
-> Editable XML file for the diagram: [`ideation/_resources/engine-architecture-v1.drawio`](./_resources/engine-architecture-v1.drawio)
+> Editable XML file for the diagram: [`ideation/_resources/engine-architecture-v1.drawio`](../_resources/engine-architecture-v1.drawio)
 
-## `Eng.Scheduler` (Scheduler)
+# `Eng.Scheduler` (Scheduler)
 Core loop of the engine that:
 
 - Synchronises engine actions with discrete time steps
 - Schedules engine actions (including dispatching of asynchronous threads)
 
-## `Eng.Mon` (Monitoring)
+# `Eng.Mon` (Monitoring)
 Involves monitoring process(es) that are:
 
 - Synchronous
@@ -62,23 +49,23 @@ These processes can be:
 - Table read queries (especially for operational tables) <br> ... *pull approach*
 - Received notifications/events <br> ... *push approach*
 
-### `Eng.Mon._envIF`
+## `Eng.Mon._envIF`
 Requirement for a 2-way interface with the environment for:
 
 - Pull approach data collection
 - Push approach data collection
 
-## `Eng.AD` (Agent Decision)
-### `Eng._FC` (Forecast Context)
+# `Eng.AD` (Agent Decision)
+## `Eng._FC` (Forecast Context)
 Context needed for the forecast model (serves as its primary input).
 
-### `Eng.buildFC` (Build Context)
+## `Eng.buildFC` (Build Context)
 Builds `Eng._FC`. May need to interact with `Env`.
 
-#### `Eng.AD.buildFC._envIF`
+## `Eng.AD.buildFC._envIF`
 Requirement for a 2-way interface with the environment for building `Eng._FC`.
 
-### `Eng.AD.adReq` (Agent Decision Request)
+## `Eng.AD.adReq` (Agent Decision Request)
 - Asynchronous
 - Triggered per n engine ticks (configurable)
 
@@ -91,7 +78,7 @@ Requirement for a 2-way interface with the environment for building `Eng._FC`.
 >
 > Currently, we are likely to pursue approach 1 due to its ease.
 
-## `Eng.AD.Q` (Agent Decision Response Queue)
+# `Eng.AD.Q` (Agent Decision Response Queue)
 Queue to hold responses from `RM`:
 
 - Stores the newest decisions at its queue head
@@ -99,7 +86,7 @@ Queue to hold responses from `RM`:
 
 > **NOTE**: Deletion upon consume is ideal as decisions need not be repeated.
 
-### `Eng.AD.adResCheck` (Agent Decision Response Check)
+## `Eng.AD.adResCheck` (Agent Decision Response Check)
 - Synchronous
 - Reads from the queue tail of `Eng.AD.Q`
 - High-to-medium frequency (ideally per engine tick)
@@ -108,14 +95,14 @@ Queue to hold responses from `RM`:
   - `RM._AD` (agent decisions)
   - `RM._ADR` (agent decision reasoning (human-readable))
 
-## `Eng._D-1` (Engine Decision Object - V1)
+# `Eng._D-1` (Engine Decision Object - V1)
 Consolidated `RM._AD` and `RM._ADR` after:
 
 - Structural validation (ensuring the expected contracts are adhered to)
 - Logical validation (ensuring values are within a valid range)
 
-## `Eng.HD` (Human Decision)
-### `Eng.HD.hdReq` (Human Decision Request)
+# `Eng.HD` (Human Decision)
+## `Eng.HD.hdReq` (Human Decision Request)
 - Asynchronous
 - Triggered upon receiving decision response
 
@@ -131,7 +118,7 @@ Consolidated `RM._AD` and `RM._ADR` after:
 > - All agent decisions will be reviewed by the human, despite human delay
 > - 1 or more agent decisions can be edited/cancelled by the human as a batch
 
-### `Eng.AD.Q` (Agent Decision Response Queue)
+## `Eng.AD.Q` (Agent Decision Response Queue)
 Queue to hold responses from `HITL`:
 
 - Stores the newest decisions at its queue head
@@ -139,21 +126,15 @@ Queue to hold responses from `HITL`:
 
 > **NOTE**: Deletion upon consume is ideal as decisions need not be repeated.
 
-### `Eng.HD.hdResCheck` (Human Decision Response Check)
+## `Eng.HD.hdResCheck` (Human Decision Response Check)
 - Synchronous
 - Reads from the queue tail of `Eng.HD.Q`
 - High-to-medium frequency (ideally per engine tick)
 - Activates upon `Eng.HD.hdReq` trigger
 - Deactivates once response from `HITL` is received
 
-### `Eng.Mon._envIF`
+## `Eng.Mon._envIF`
 Requirement for a 1-way interface with the environment for decision execution.
 
-## `Eng.Exec` (Executor)
+# `Eng.Exec` (Executor)
 Executes the decisions made via `Eng.Mon._envIF`.
-
-# `RM` (Reasoning Model)
-[TO BE DEFINED]
-
-# `HITL` (Human-in-the-Loop)
-[TO BE DEFINED]
