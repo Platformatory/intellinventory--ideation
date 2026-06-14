@@ -52,7 +52,7 @@ Involves monitoring process(es). These processes can be:
 - Table read queries (especially for operational tables) <br> ... *pull approach*
 - Received notifications/events <br> ... *push approach*
 
-> **NOTE**: For now, only table read queries from operational tables is done.
+> **NOTE**: For now, only table read queries from operational tables is expected.
 
 ## `Eng.Mon._envIF`
 Requirement for a 2-way interface with the environment for:
