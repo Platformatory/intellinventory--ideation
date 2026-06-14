@@ -157,3 +157,5 @@ Requirement for a 1-way interface with the environment for decision execution.
 # Remarks
 ## Separation between `Eng.AD <-> Eng.AD.buildContext` & `Eng.AD.adReq`
 Consider whether `Eng.AD.adReq` should itself handle the request-response to and from `Eng.AD.buildContext`, or whether a separation between this handling and the sending of a request to `RM` is valid. Conceptually, this separation is cleaner, as we have the different request-response lines distributed to separate components, with no single component managing more than one request-response line. The practical implementation of this, however, may involve some consolidation of these functionalities into a single function, i.e. a single function that handles the request-response to and from `Eng.AD.buildContext`, and upon receiving a response, triggers the sending of a request to the `RM`.
+
+> **NOTE**: This component was initially conceptualised as the entrypoint to `Eng.AD`, but the architecture has shifted since then, so this separation is sort of a relic of the previous architectural ideas.
