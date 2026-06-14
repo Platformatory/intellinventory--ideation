@@ -1,2 +1,26 @@
-# intellinventory--ideation
-IDEATION REPO FOR: Databricks-native agentic AI demonstration, focused on autonomous/semi-autonomous inventory management.
+<h1>Intellinventory</h1>
+
+*Inventory management intelligence via Databricks-native agentic AI.*
+
+---
+
+**Phase 2**
+
+> **Relevant repositories**:
+>
+> **See**: [`implementation` in the `main` branch](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--ideation/tree/main/implementation)
+
+---
+
+Directories:
+
+- [`ideation`](./ideation/)
+- [`planning`](./planning/)
+
+---
+
+The following are in the [`main`](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--ideation/tree/main) branch:
+
+- `knowledgeBase`
+- `literature`
+- `implementation`
