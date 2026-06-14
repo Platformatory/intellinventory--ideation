@@ -147,5 +147,7 @@ Queue to hold responses from `HITL`:
 # `Eng.Exec` (Executor)
 Executes the decisions in `Eng._D-2` via `Eng.Mon._envIF`.
 
+> **NOTE**: Conceptually, `Eng.Exec` is asynchronous, i.e. it does not cause the monitoring loop to stop. Practically, if there is no expected delay from `Eng.Exec` we can implement it as a synchronous part of the core engine loop managed by `Eng.Scheduler`.
+
 ## `Eng.Exec._envIF`
 Requirement for a 1-way interface with the environment for decision execution.
