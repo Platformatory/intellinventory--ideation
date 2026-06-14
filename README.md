@@ -1,6 +1,10 @@
 # Databricks Agentic AI Project
 
-***Phase 1***
+*Inventory management intelligence via Databricks-native agentic AI.*
+
+---
+
+**Phase 1**
 
 > **Relevant repositories**:
 >
