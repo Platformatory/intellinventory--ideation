@@ -2,7 +2,10 @@
 
 > **Module code**: `Eng`
 
-> **Relevant context**: [`ideation/architecture/README.md`](./README.md)
+> **Relevant context**: [`ideation/architecture/README.md`](./README.md); defines:
+>
+> - `RM` (reasoning model) + submodules/components
+> - `HITL` (human-in-the-loop) + submodules/components
 
 ---
 
@@ -24,6 +27,7 @@
   - [`Eng.HD.hdReq` (Human Decision Request)](#enghdhdreq-human-decision-request)
   - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue-1)
   - [`Eng.HD.hdResCheck` (Human Decision Response Check)](#enghdhdrescheck-human-decision-response-check)
+- [`Eng._D-2` (Engine Decision Object - V2)](#eng_d-2-engine-decision-object---v2)
 - [`Eng.Exec` (Executor)](#engexec-executor)
   - [`Eng.Exec._envIF`](#engexec_envif)
 
@@ -135,7 +139,12 @@ Queue to hold responses from `HITL`:
 - Reads from the queue tail of `Eng.HD.Q`
 - High-to-medium frequency (ideally per engine tick)
 - Activates upon `Eng.HD.hdReq` trigger
-- Deactivates once response from `HITL` is received
+- Deactivates once response from `HITL` (`HITL._D`) is received
+
+# `Eng._D-2` (Engine Decision Object - V2)
+`HITL._D` after passing structural and logical validation.
+
+> **NOTE**: `HITL._D` is the response from `HITL`
 
 # `Eng.Exec` (Executor)
 Executes the decisions made via `Eng.Mon._envIF`.
