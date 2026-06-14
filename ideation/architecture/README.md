@@ -21,7 +21,7 @@
 | Starts with lowercase (no underscore prefix) | Functionality/Task |
 | Starts with uppercase (underscore prefix) | Data |
 | Starts with lowercase (underscore prefix) | Requirement |
-| Dot (`.`) | Separation; broader-to-narrower = left-to-right |
+| Dot (`.`) | Hierarchical separation; broader-to-narrower = left-to-right |
 | Hyphen + Number | Version |
 
 # `Eng` (Engine)

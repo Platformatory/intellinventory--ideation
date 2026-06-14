@@ -4,6 +4,7 @@
 
 > **Relevant context**: [`ideation/architecture/README.md`](./README.md); defines:
 >
+> - Notation guide
 > - `RM` (reasoning model) + submodules/components
 > - `HITL` (human-in-the-loop) + submodules/components
 
