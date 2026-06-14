@@ -1,0 +1,159 @@
+
+<style>
+* { box-sizing: border-box; }
+.wrap { padding: 1rem 0; font-family: var(--font-sans); }
+.matrix-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.axis-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.grid-wrap { display: grid; grid-template-columns: 90px repeat(6, 1fr); gap: 4px; margin-bottom: 1.5rem; }
+.col-header { font-size: 11px; color: var(--color-text-secondary); text-align: center; padding: 4px 2px; line-height: 1.3; }
+.row-header { font-size: 11px; color: var(--color-text-secondary); text-align: right; padding: 4px 6px 4px 0; display: flex; align-items: center; justify-content: flex-end; line-height: 1.3; }
+.cell { height: 44px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.15s; border: 0.5px solid transparent; }
+.cell:hover { opacity: 0.8; }
+.cell.strong { background: #EAF3DE; border-color: #C0DD97; }
+.cell.good { background: #E6F1FB; border-color: #B5D4F4; }
+.cell.weak { background: #FAEEDA; border-color: #FAC775; }
+.cell.bad { background: #F1EFE8; border-color: #D3D1C7; }
+.cell.selected { outline: 2px solid #378ADD; }
+.cell-text { font-size: 11px; font-weight: 500; text-align: center; line-height: 1.2; }
+.cell.strong .cell-text { color: #27500A; }
+.cell.good .cell-text { color: #0C447C; }
+.cell.weak .cell-text { color: #633806; }
+.cell.bad .cell-text { color: #5F5E5A; }
+.legend { display: flex; gap: 16px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+.detail { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-top: 1rem; }
+.detail-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.detail-rating { font-size: 12px; margin-bottom: 10px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.detail-section h4 { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; }
+.detail-section p { font-size: 13px; color: var(--color-text-primary); margin: 0; line-height: 1.6; }
+.close-x { float: right; background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 2px 8px; font-size: 12px; cursor: pointer; color: var(--color-text-secondary); }
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Combination landscape - domain agents vs platform agents synergy matrix</h2>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#EAF3DE;border:0.5px solid #C0DD97"></div>Strong synergy - emergent value</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB;border:0.5px solid #B5D4F4"></div>Good fit - useful combination</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FAEEDA;border:0.5px solid #FAC775"></div>Weak - scope risk, little emergent value</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#F1EFE8;border:0.5px solid #D3D1C7"></div>Poor - incompatible or redundant</div>
+</div>
+
+<div class="matrix-label">Click any cell to see the reasoning. Rows = domain agents. Columns = platform agents.</div>
+
+<div class="grid-wrap" id="matrix"></div>
+<div id="detailBox"></div>
+</div>
+
+<script>
+const domain = [
+  {id:'inv', label:'#5 Inventory\nReorder'},
+  {id:'ecom', label:'#4 E-Commerce\nSupport'},
+  {id:'patient', label:'#3 Patient\nWarning'},
+  {id:'supply', label:'#2 Supply\nChain'},
+  {id:'fraud', label:'#1 Fraud\nDetection'},
+];
+const platform = [
+  {id:'onboard', label:'#9 Data\nOnboarding'},
+  {id:'whisperer', label:'#12 Platform\nWhisperer'},
+  {id:'narrator', label:'#8 Pipeline\nNarrator'},
+  {id:'archaeo', label:'#10 Archaeologist'},
+  {id:'diplomat', label:'#11 Contract\nDiplomat'},
+  {id:'inquisitor', label:'#13 Inquisitor'},
+];
+
+const cells = {
+  'inv-onboard': {grade:'strong', short:'Top combo', title:'Inventory Reorder + Data Onboarding Assessor', why:'The onboarding assessor validates every new supplier or product catalogue dataset before the reorder agent can act on it. Bad data quality → bad POs. The assessor is the data trust layer the reorder agent needs. Both loops are clean, both share the same Delta-first architecture, and the demo has two distinct "moments": data arrives → assessor profiles it → reorder agent reads it → raises PO.', synergy:'Assessor output feeds directly into reorder agent context. You get a natural two-stage pipeline that demonstrates data quality → decision quality.', risk:'Assessor must run before reorder agent on every new dataset. Pipeline ordering needs care but is straightforward in Databricks.'},
+  'inv-whisperer': {grade:'strong', short:'Best demo', title:'Inventory Reorder + Platform Whisperer', why:'The whisperer gives you a conversational interface over everything the reorder agent has decided. "Why did we raise a PO for SKU-4421 at 3am?" is answered by querying the reorder agent\'s Delta audit log. The reorder agent produces decisions; the whisperer makes those decisions interrogable. Together they demonstrate both the agent\'s autonomy and the human\'s ability to hold it accountable.', synergy:'Reorder agent writes decisions + rationale to Delta. Whisperer reads them on demand. One builds evidence, the other surfaces it.', risk:'Whisperer query wrappers need to include the PO and inventory tables. A bit of extra tool writing, but nothing structurally hard.'},
+  'inv-narrator': {grade:'good', short:'Good fit', title:'Inventory Reorder + Pipeline Narrator', why:'The narrator produces a daily briefing of how the reorder pipeline is performing - failure rates, anomalous PO volumes, supplier response latency. Useful, but the narrator adds monitoring-layer value rather than core domain value. It\'s a stronger week-3 addition than a week-2 scope item.', synergy:'Reorder pipeline generates rich MLflow run metadata. Narrator reads it and flags regressions. Clean signal flow.', risk:'Adds scheduling complexity. Keep narrator as a stretch goal.'},
+  'inv-archaeo': {grade:'weak', short:'Scope risk', title:'Inventory Reorder + Platform Archaeologist', why:'The archaeologist needs historical platform data to be interesting. A two-week-old inventory project has no meaningful history to excavate. The archaeologist\'s value is retrospective; the inventory agent\'s value is prospective. They don\'t reinforce each other in a 2-week window.', synergy:'Minimal in week 2. Strong as a month-2 addition.', risk:'Archaeologist has nothing interesting to analyse on a fresh platform.'},
+  'inv-diplomat': {grade:'weak', short:'Premature', title:'Inventory Reorder + Data Contract Diplomat', why:'A contract between the supplier data producer and the reorder agent consumer is a good idea in principle. But drafting it requires observed behaviour history - you need weeks of runs before the diplomat has useful patterns to extract. Week 2 is too early.', synergy:'Good long-term story. Diplomat generates the contract that governs the reorder agent\'s data dependencies.', risk:'No observed behaviour to work from in week 2. Diplomat produces thin output.'},
+  'inv-inquisitor': {grade:'bad', short:'Wrong fit', title:'Inventory Reorder + Platform Inquisitor', why:'The inquisitor is for extracting tacit knowledge about an existing platform. A 2-week build has no tacit knowledge to extract - the team just built it and knows exactly what\'s in it. The inquisitor shines on inherited, legacy, or complex platforms.', synergy:'None in a fresh build context.', risk:'Interviews the team about a system they built 3 days ago. No knowledge gap exists.'},
+
+  'ecom-onboard': {grade:'good', short:'Useful', title:'E-Commerce Support + Data Onboarding Assessor', why:'When a new customer segment dataset or promotions catalogue arrives, the assessor validates it before the support agent uses it to make resolution decisions. Prevents the support agent from offering promotions that don\'t exist or applying wrong LTV scores.', synergy:'Assessor runs as a pre-check gate on any new input dataset to the support agent.', risk:'The support agent\'s datasets (orders, customers) are relatively static. Trigger frequency is low, reducing demo impact.'},
+  'ecom-whisperer': {grade:'strong', short:'Great demo', title:'E-Commerce Support + Platform Whisperer', why:'The whisperer lets you ask "why did the agent refund this customer and not that one?" - interrogating the support agent\'s decisions in plain English. For a support use case where decisions have direct customer impact, the ability to audit conversationally is genuinely powerful and legible to any business audience.', synergy:'Support agent writes every decision + rationale to Delta. Whisperer surfaces them on demand. Natural audit trail story.', risk:'Need to make sure support agent\'s decision log is rich enough to be interesting to query.'},
+  'ecom-narrator': {grade:'good', short:'Good fit', title:'E-Commerce Support + Pipeline Narrator', why:'Narrator produces a daily briefing on support agent performance - resolution rate, escalation rate, avg handle time, policy breach flags. Business stakeholders can read a plain-English summary rather than a dashboard. Genuinely useful complement.', synergy:'Support agent\'s Delta tables are rich with resolution outcomes. Narrator has good signal to narrate.', risk:'Relatively low engineering complexity. Safe to include as week-2 scope if narrator is kept simple.'},
+  'ecom-archaeo': {grade:'bad', short:'Wrong fit', title:'E-Commerce Support + Archaeologist', why:'Same problem as inventory + archaeologist. No platform history to excavate.', synergy:'None in 2 weeks.', risk:'Archaeologist can\'t do its job on a new platform.'},
+  'ecom-diplomat': {grade:'weak', short:'Premature', title:'E-Commerce Support + Contract Diplomat', why:'Contracts between the orders producer and support agent consumer are theoretically valuable but require observed behaviour history.', synergy:'Good month-2 story.', risk:'Too early in a 2-week build.'},
+  'ecom-inquisitor': {grade:'bad', short:'Wrong fit', title:'E-Commerce Support + Inquisitor', why:'Same fresh-build problem. No accumulated knowledge to extract.', synergy:'None.', risk:'No knowledge gap to fill.'},
+
+  'patient-onboard': {grade:'strong', short:'Top combo', title:'Patient Warning + Data Onboarding Assessor', why:'Every new hospital\'s patient dataset has different schema, null patterns, and encoding conventions. The assessor validates each incoming dataset for completeness and PII risk before the warning agent starts scoring patients from it. This is not just useful - it\'s the kind of safety story that makes a healthcare demo genuinely impressive. You wouldn\'t want an early warning agent acting on unvalidated data.', synergy:'Assessor produces a readiness verdict and quality flags. Warning agent only starts if assessor gives clearance. One-way dependency, cleanly implementable.', risk:'Healthcare framing needs disclaimers regardless. Assessor doesn\'t change that risk.'},
+  'patient-whisperer': {grade:'good', short:'Good fit', title:'Patient Warning + Platform Whisperer', why:'Clinical staff can ask "why was patient 47 flagged at 2am?" and get an evidence-grounded answer from the audit log. Strong accountability story for a healthcare context. But the whisperer needs rich enough audit logs to answer clinical questions meaningfully.', synergy:'Warning agent writes full NEWS2 calculation + rationale per alert. Whisperer surfaces it conversationally.', risk:'Clinical question-answering raises the bar for answer quality. Whisperer must be careful not to fabricate clinical reasoning.'},
+  'patient-narrator': {grade:'good', short:'Good fit', title:'Patient Warning + Pipeline Narrator', why:'Daily briefing on ward-level pipeline health - alert rates, false positive rate, patients flagged vs not flagged. Useful for a ward manager or data engineer running the system. Good monitoring story.', synergy:'Alert tables provide rich signal for narrator. Clean MLflow metadata.', risk:'Narrator output may need clinical framing, which adds prompt design complexity.'},
+  'patient-archaeo': {grade:'bad', short:'Wrong fit', title:'Patient Warning + Archaeologist', why:'No platform history.', synergy:'None in 2 weeks.', risk:'Fresh build.'},
+  'patient-diplomat': {grade:'weak', short:'Niche', title:'Patient Warning + Contract Diplomat', why:'A data contract on the vitals stream is actually a great idea in healthcare (schema stability is safety-critical). But requires observed history.', synergy:'Long-term: contracts on clinical data sources make the warning agent more reliable.', risk:'No history to work from in week 2.'},
+  'patient-inquisitor': {grade:'bad', short:'Wrong fit', title:'Patient Warning + Inquisitor', why:'No tacit knowledge to extract from a new build.', synergy:'None.', risk:'Fresh build.'},
+
+  'supply-onboard': {grade:'good', short:'Useful', title:'Supply Chain + Data Onboarding Assessor', why:'New supplier datasets arrive with their own formats and quality issues. Assessor validates them before the supply chain agent trusts them for disruption decisions. Solid combination but supply chain agent is already a weaker pick than inventory reorder.', synergy:'Clean dependency: new supplier → assessor → supply chain agent.', risk:'Lower overall score because supply chain agent itself has more build complexity than inventory.'},
+  'supply-whisperer': {grade:'good', short:'Good fit', title:'Supply Chain + Platform Whisperer', why:'Query supply chain decisions in plain English. Why did we switch to supplier B? Why was an emergency flag raised? Solid audit trail story.', synergy:'Decision log → whisperer query layer. Same pattern as inventory.', risk:'Supply chain agent is harder to build in 2 weeks, reducing headroom for the whisperer.'},
+  'supply-narrator': {grade:'weak', short:'Marginal', title:'Supply Chain + Pipeline Narrator', why:'Adds monitoring. Doesn\'t add enough emergent value to justify the scope.', synergy:'Pipeline performance monitoring. Modest value.', risk:'Too much total scope.'},
+  'supply-archaeo': {grade:'bad', short:'Wrong fit', title:'Supply Chain + Archaeologist', why:'No history.', synergy:'None.', risk:'Fresh build.'},
+  'supply-diplomat': {grade:'weak', short:'Premature', title:'Supply Chain + Contract Diplomat', why:'Good long-term fit - supplier data contracts are genuinely valuable. Too early.', synergy:'Strong month-2 story.', risk:'No observed behaviour.'},
+  'supply-inquisitor': {grade:'bad', short:'Wrong fit', title:'Supply Chain + Inquisitor', why:'No accumulated knowledge.', synergy:'None.', risk:'Fresh build.'},
+
+  'fraud-onboard': {grade:'weak', short:'Scope risk', title:'Fraud Detection + Data Onboarding Assessor', why:'Fraud detection requires streaming and ML model training - already the hardest build in catalogue 1. Adding an assessor doesn\'t help enough to justify the scope increase. The fraud agent\'s main data (transactions) isn\'t "onboarded" in the same sense - it streams in continuously.', synergy:'Limited - assessor is designed for batch dataset arrivals, not continuous streams.', risk:'Fraud detection is already high scope. Adding any platform agent pushes week-2 delivery risk to high.'},
+  'fraud-whisperer': {grade:'weak', short:'Scope risk', title:'Fraud Detection + Platform Whisperer', why:'A good long-term combination - interrogating why a transaction was blocked is exactly what a fraud analyst needs. But fraud detection is already complex to build. The whisperer is better paired with a simpler domain agent.', synergy:'Strong audit story. Decision rationale is high-value in fraud context.', risk:'Fraud detection scope alone is high. Don\'t add whisperer in week 2.'},
+  'fraud-narrator': {grade:'weak', short:'Marginal', title:'Fraud Detection + Pipeline Narrator', why:'Monitoring value only. Not worth the combined scope.', synergy:'Modest.', risk:'Fraud detection alone strains 2 weeks.'},
+  'fraud-archaeo': {grade:'bad', short:'Wrong fit', title:'Fraud Detection + Archaeologist', why:'No history, and fraud detection is already complex.', synergy:'None.', risk:'Double overscope.'},
+  'fraud-diplomat': {grade:'bad', short:'Wrong fit', title:'Fraud Detection + Contract Diplomat', why:'No observed history plus complex domain agent.', synergy:'None in week 2.', risk:'Severely overscoped.'},
+  'fraud-inquisitor': {grade:'bad', short:'Wrong fit', title:'Fraud Detection + Inquisitor', why:'Completely wrong fit for a fresh build. Plus fraud detection is already complex.', synergy:'None.', risk:'Wrong context.'},
+};
+
+const gradeColors = {strong:'strong', good:'good', weak:'weak', bad:'bad'};
+let selectedKey = null;
+
+const grid = document.getElementById('matrix');
+
+const cornerDiv = document.createElement('div');
+grid.appendChild(cornerDiv);
+
+platform.forEach(p => {
+  const h = document.createElement('div');
+  h.className = 'col-header';
+  h.textContent = p.label;
+  grid.appendChild(h);
+});
+
+domain.forEach(d => {
+  const rh = document.createElement('div');
+  rh.className = 'row-header';
+  rh.textContent = d.label;
+  grid.appendChild(rh);
+
+  platform.forEach(p => {
+    const key = d.id + '-' + p.id;
+    const data = cells[key] || {grade:'bad', short:'-'};
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (gradeColors[data.grade] || 'bad');
+    cell.id = 'cell-' + key;
+    cell.innerHTML = `<span class="cell-text">${data.short}</span>`;
+    cell.onclick = () => showDetail(key, data);
+    grid.appendChild(cell);
+  });
+});
+
+function showDetail(key, data) {
+  if (selectedKey) document.getElementById('cell-' + selectedKey)?.classList.remove('selected');
+  if (selectedKey === key) { selectedKey = null; document.getElementById('detailBox').innerHTML = ''; return; }
+  selectedKey = key;
+  document.getElementById('cell-' + key)?.classList.add('selected');
+  const gradeLabel = {strong:'Strong synergy', good:'Good fit', weak:'Weak - scope risk', bad:'Poor - not recommended'};
+  const gradeColor = {strong:'var(--color-text-success)', good:'var(--color-text-info)', weak:'var(--color-text-warning)', bad:'var(--color-text-secondary)'};
+  document.getElementById('detailBox').innerHTML = `
+    <div class="detail">
+      <button class="close-x" onclick="document.getElementById('detailBox').innerHTML='';document.getElementById('cell-${key}')?.classList.remove('selected');selectedKey=null;">✕</button>
+      <div class="detail-title">${data.title || key}</div>
+      <div class="detail-rating" style="color:${gradeColor[data.grade] || 'inherit'};font-weight:500">${gradeLabel[data.grade] || ''}</div>
+      <div class="detail-grid">
+        <div class="detail-section"><h4>Why it works (or doesn't)</h4><p>${data.why || '-'}</p></div>
+        <div class="detail-section">
+          <div style="margin-bottom:12px"><h4>Synergy mechanism</h4><p>${data.synergy || '-'}</p></div>
+          <div><h4>Key risk</h4><p>${data.risk || '-'}</p></div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('detailBox').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>

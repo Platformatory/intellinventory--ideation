@@ -1,0 +1,283 @@
+
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; }
+.container { padding: 1rem 0; font-family: var(--font-sans); }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+.filter-label { font-size: 13px; color: var(--color-text-secondary); margin-right: 4px; }
+.pill { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+.pill.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.15s; }
+.card:hover { border-color: var(--color-border-secondary); }
+.card.selected { border: 2px solid #378ADD; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; flex: 1; padding-right: 8px; }
+.score-badge { font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); white-space: nowrap; }
+.score-high { background: #EAF3DE; color: #3B6D11; }
+.score-mid { background: #FAEEDA; color: #854F0B; }
+.score-low { background: #FCEBEB; color: #A32D2D; }
+.tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); }
+.tag-cat1 { background: #EEEDFE; color: #3C3489; }
+.tag-cat2 { background: #E1F5EE; color: #085041; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.bar-label { font-size: 11px; color: var(--color-text-secondary); width: 90px; flex-shrink: 0; }
+.bar-track { flex: 1; height: 5px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.bar-fill-free { background: #1D9E75; }
+.bar-fill-scope { background: #378ADD; }
+.bar-fill-novice { background: #7F77DD; }
+.bar-fill-platform { background: #D85A30; }
+.card-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; margin-top: 8px; }
+.detail-panel { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-top: 1rem; }
+.detail-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.detail-subtitle { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; font-style: italic; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-section h4 { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 6px; }
+.detail-section ul { margin: 0; padding-left: 1rem; font-size: 13px; color: var(--color-text-primary); line-height: 1.7; }
+.close-btn { float: right; background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 3px 10px; font-size: 12px; cursor: pointer; color: var(--color-text-secondary); }
+.top-banner { background: #EAF3DE; border: 0.5px solid #C0DD97; border-radius: var(--border-radius-md); padding: 8px 14px; font-size: 13px; color: #3B6D11; margin-bottom: 1rem; }
+.hidden { display: none; }
+.sort-row { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; }
+.sort-label { font-size: 13px; color: var(--color-text-secondary); }
+select { font-size: 13px; padding: 4px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+</style>
+
+<div class="container">
+<h2 class="sr-only">Hackathon idea evaluator - 13 ideas scored against your constraints</h2>
+
+<div class="top-banner">Click any card to see implementation breakdown. Filter by catalogue or sort by criterion.</div>
+
+<div class="filter-row">
+  <span class="filter-label">Filter:</span>
+  <span class="pill active" onclick="setFilter('all',this)">All 13</span>
+  <span class="pill" onclick="setFilter('cat1',this)">Catalogue 1 - Domain</span>
+  <span class="pill" onclick="setFilter('cat2',this)">Catalogue 2 - Platform Eng</span>
+</div>
+
+<div class="sort-row">
+  <span class="sort-label">Sort by:</span>
+  <select id="sortBy" onchange="renderCards()">
+    <option value="overall">Overall score</option>
+    <option value="free">Free tier fit</option>
+    <option value="scope">2-week scope</option>
+    <option value="novice">Novice friendliness</option>
+    <option value="platform">Platform showcase</option>
+  </select>
+</div>
+
+<div class="grid" id="cardGrid"></div>
+<div id="detailPanel"></div>
+</div>
+
+<script>
+const ideas = [
+  {
+    id:1, cat:'cat1', name:'Fraud Detection & Response', tagline:'Watch transactions, score risk, auto-flag or block',
+    scores:{free:2,scope:3,novice:3,platform:5},
+    risks:['Kafka/streaming setup is complex on free tier','ML model training requires compute budget','Hard to demo without realistic transaction volume'],
+    strengths:['Very clean observe→reason→act loop','Strong visual demo (live flags)','Extensible via graph networks'],
+    v1:['Synthetic CSV transactions loaded via Auto Loader','XGBoost fraud model in MLflow (notebook)','Simple threshold agent: score → decision → Delta log'],
+    avoid:['Real Kafka - use file drop simulation instead','Graph fraud networks in week 1','Live model serving (call MLflow directly from notebook)'],
+    overall:13
+  },
+  {
+    id:2, cat:'cat1', name:'Supply Chain Disruption & Reorder', tagline:'Monitor inventory, detect supplier risk, suggest reorders',
+    scores:{free:4,scope:4,novice:4,platform:4},
+    risks:['Supplier API simulation adds complexity','Multi-variable reorder logic can spiral','Less visual than fraud or dispatch demos'],
+    strengths:['Clean structured loop','No streaming required','Easy synthetic data'],
+    v1:['Kaggle inventory CSV → Delta','DLT pipeline for enrichment','Agent checks stock thresholds + supplier table, writes PO to Delta'],
+    avoid:['Real supplier APIs','Budget constraint logic in week 1','Multi-SKU optimisation'],
+    overall:16
+  },
+  {
+    id:3, cat:'cat1', name:'Patient Deterioration Warning', tagline:'Stream vitals, compute NEWS2 score, alert nurses',
+    scores:{free:4,scope:4,novice:4,platform:4},
+    risks:['Healthcare framing may need disclaimers','Synthetic vitals need to be realistic enough to demo','Alert fatigue is hard to demo convincingly'],
+    strengths:['NEWS2 is a published formula - no ML training needed','Emotionally powerful demo','Rolling window logic is pure data engineering'],
+    v1:['Python NumPy vitals generator → Delta','DLT rolling window per patient','Agent computes NEWS2, writes alert to Delta + LLM summary for nurse'],
+    avoid:['Real patient data','Medication interaction checking in week 1','Sepsis ML models'],
+    overall:16
+  },
+  {
+    id:4, cat:'cat1', name:'E-Commerce Support & Order Recovery', tagline:'Triage support tickets, auto-resolve or escalate',
+    scores:{free:4,scope:4,novice:5,platform:4},
+    risks:['LTV model adds a full MLflow training step','Multi-agent (triage + resolver) is week-2 complexity','Resolution quality is hard to evaluate objectively'],
+    strengths:['Gradio UI is trivially easy to build','Most relatable domain for any audience','Clean data engineering (orders + tickets)'],
+    v1:['Faker-generated orders + tickets → Delta','DLT enrichment with order history','Single resolver agent: lookup order → check policy table → write resolution to Delta'],
+    avoid:['Separate triage agent in week 1','LTV model (use simple order_value proxy)','A/B testing resolution strategies'],
+    overall:17
+  },
+  {
+    id:5, cat:'cat1', name:'Warehouse / Inventory Reorder ⭐', tagline:'Sales velocity → days-to-stockout → raise PO',
+    scores:{free:5,scope:5,novice:5,platform:5},
+    risks:['Demand forecasting accuracy matters for demo plausibility','PO "action" needs a simulated supplier endpoint','Not visually exciting without a good dashboard'],
+    strengths:['Kaggle retail datasets ready-made','Cleanest loop of all 13 ideas','Full Databricks stack used naturally','Moving average forecast needs zero ML knowledge'],
+    v1:['Instacart/UK Retail Kaggle CSV → Delta via Auto Loader','DLT: sales → inventory → enriched with velocity + days-to-stockout','Moving average in MLflow','Agent: check_inventory → forecast_demand → raise_PO → log to Delta'],
+    avoid:['Prophet/ML forecasting in week 1','Multi-supplier negotiation','Budget cap logic'],
+    overall:20
+  },
+  {
+    id:6, cat:'cat1', name:'Network / Infrastructure Anomaly', tagline:'Metrics stream → anomaly detection → incident report',
+    scores:{free:2,scope:2,novice:2,platform:5},
+    risks:['Realistic metric simulation is non-trivial','Isolation Forest model requires careful tuning to demo well','No "natural" domain data - everything synthetic'],
+    strengths:['Strong platform showcase','Technically impressive if it works','LLM incident reports are genuinely useful'],
+    v1:['Python metrics simulator with injected spikes → Delta','DLT rolling window per service','Isolation Forest in MLflow','Agent: score anomaly → LLM incident report → Delta'],
+    avoid:['Real Prometheus/CloudWatch (not available on free tier)','Dependency graph reasoning in week 1','Auto-remediation webhooks'],
+    overall:11
+  },
+  {
+    id:7, cat:'cat1', name:'Food Delivery Dispatch', tagline:'Assign drivers to orders, handle SLA breaches',
+    scores:{free:3,scope:2,novice:2,platform:4},
+    risks:['Geospatial routing logic is a significant extra complexity','Driver state management is stateful and tricky','Hard to demo without a live map (which needs extra work)'],
+    strengths:['Very visual if you build the map','Multi-variable assignment is good agent reasoning demo','Extensible to batching'],
+    v1:['Simulated city lat/long grid for orders + drivers','DLT enrichment with nearest driver distance','Agent: score drivers → assign → log to Delta','No real routing - Manhattan distance approximation'],
+    avoid:['Real routing APIs (blocked on free tier)','Live Lakeview map in week 1','Multi-order batching'],
+    overall:11
+  },
+  {
+    id:8, cat:'cat2', name:'Pipeline Health Narrator', tagline:'Ingest pipeline logs → produce a daily reasoned briefing',
+    scores:{free:5,scope:5,novice:5,platform:3},
+    risks:['Output quality depends heavily on prompt engineering','"Briefing" format is less visually impressive than real-time agents','Value is subtle - hard to make exciting in a 5-min demo'],
+    strengths:['Zero streaming setup','Works entirely from existing MLflow run history','Agent is literally a single LLM call','Perfect for data engineering team'],
+    v1:['Extract signal from MLflow runs: duration, failures, record counts','Single LLM call: "summarise these signals, prioritise issues, show reasoning"','Output to Delta + print to notebook'],
+    avoid:['Slack/email delivery in week 1','Multi-pipeline comparison','Anomaly baseline computation'],
+    overall:18
+  },
+  {
+    id:9, cat:'cat2', name:'Data Onboarding Assessor ⭐', tagline:'New dataset arrives → profile it → structured assessment report',
+    scores:{free:5,scope:5,novice:5,platform:4},
+    risks:['Vector Search setup adds a day of complexity (optional for v1)','PII detection is a rabbit hole - keep it heuristic','Assessment quality varies with data richness'],
+    strengths:['Event-triggered (clean demo trigger)','Every output is inspectable and verifiable','Directly useful to data engineers immediately','No streaming, no ML training, no complex infra'],
+    v1:['Upload any dataset to Delta','Profile it: nulls, cardinality, schema, value distributions (pure SQL/Python)','Single LLM call: "assess this profile, flag issues, give readiness verdict"','Write JSON report to Delta'],
+    avoid:['Vector Search in week 1 (use static context instead)','Auto-triggered Unity Catalog events (manual call is fine)','Full PII detection pipeline'],
+    overall:19
+  },
+  {
+    id:10, cat:'cat2', name:'Platform Archaeologist', tagline:'Read platform history → characterise what kind of platform you have',
+    scores:{free:5,scope:4,novice:4,platform:3},
+    risks:['Output is narrative, not actionable - harder to evaluate','Interesting but not "urgent"','Requires a platform with some history to analyse'],
+    strengths:['Zero write surface - pure read','Fascinating demo if you use your own platform\'s history','Strong LLM reasoning showcase','DESCRIBE HISTORY is native Databricks'],
+    v1:['Query MLflow run history + Delta DESCRIBE HISTORY','Aggregate into temporal patterns (weekday vs weekend failure rate etc.)','Single LLM call: "characterise this platform\'s habits and weak points"','Output narrative + evidence citations to Delta'],
+    avoid:['Cross-workspace comparison','Scheduled re-runs','Connecting to Unity Catalog audit logs (complex on free tier)'],
+    overall:16
+  },
+  {
+    id:11, cat:'cat2', name:'Data Contract Diplomat', tagline:'Observe producer-consumer behaviour → draft a data contract',
+    scores:{free:4,scope:3,novice:3,platform:4},
+    risks:['Consumer access pattern extraction from pipeline code is fiddly','"Data contract" concept may need explaining to judges','Output value is clearest to senior data engineers only'],
+    strengths:['Genuinely novel - nothing in the market does this','Output in open Data Contract Spec format','Strong XAI story (every clause has evidence)'],
+    v1:['Profile producer dataset: schema + null rates + update cadence','Manually specify one consumer\'s access patterns (simplification)','LLM call: "draft a contract reflecting this relationship, flag divergences"','Write draft to Delta'],
+    avoid:['Automated consumer pattern extraction in week 1','Full platform contract graph','Unity Catalog publication step'],
+    overall:14
+  },
+  {
+    id:12, cat:'cat2', name:'Platform Whisperer ⭐', tagline:'Ask your platform anything in plain English, get an evidenced answer',
+    scores:{free:5,scope:5,novice:4,platform:3},
+    risks:['ReAct loop is slightly more complex than single LLM call','Hallucination risk if evidence retrieval is incomplete','Demo depends on having interesting questions ready'],
+    strengths:['Zero infrastructure - notebook + text input = full demo','Most universally legible to any audience','Teaches ReAct pattern naturally','Read-only - nothing can go wrong'],
+    v1:['Write 4 query wrappers: query_mlflow_runs, query_delta_history, query_jobs_log, query_schema','ReAct loop: reason → call tool → observe → reason again','Output: answer + evidence citations + confidence level','Gradio or ipywidgets chat interface'],
+    avoid:['Multi-workspace in week 1','Proactive alerts','Connecting to external sources'],
+    overall:17
+  },
+  {
+    id:13, cat:'cat2', name:'Platform Inquisitor', tagline:'Interview your engineers to extract tacit knowledge before it leaves',
+    scores:{free:5,scope:4,novice:4,platform:2},
+    risks:['Value is less immediately legible than other proposals','Requires a willing participant for a live demo','Knowledge extraction quality depends on prompt sophistication'],
+    strengths:['Most novel idea of all 13','Demo is inherently live and dynamic','Zero infrastructure - chat loop in a notebook','Teaches multi-turn ReAct naturally'],
+    v1:['Pre-load platform context: Delta history summaries, MLflow anomaly flags','Conversational ReAct loop: ask → listen → cross-reference → follow up','Extract structured knowledge records per statement','Persist to Delta, output confidence map'],
+    avoid:['Multi-engineer sessions in week 1','Automated knowledge graph','Scheduling check-in sessions'],
+    overall:15
+  },
+];
+
+let activeFilter = 'all';
+let selectedId = null;
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderCards();
+}
+
+function getScore(idea) {
+  const s = idea.scores;
+  return s.free + s.scope + s.novice + s.platform;
+}
+
+function renderCards() {
+  const sortBy = document.getElementById('sortBy').value;
+  let filtered = ideas.filter(i => activeFilter === 'all' || i.cat === activeFilter);
+  filtered.sort((a,b) => {
+    if(sortBy === 'overall') return getScore(b) - getScore(a);
+    return b.scores[sortBy] - a.scores[sortBy];
+  });
+
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  filtered.forEach(idea => {
+    const s = idea.scores;
+    const total = getScore(idea);
+    const maxTotal = 20;
+    const pct = total / maxTotal;
+    const badgeClass = pct >= 0.8 ? 'score-high' : pct >= 0.6 ? 'score-mid' : 'score-low';
+    const catTag = idea.cat === 'cat1'
+      ? '<span class="tag tag-cat1">Domain agent</span>'
+      : '<span class="tag tag-cat2">Platform eng</span>';
+    const isSelected = idea.id === selectedId;
+
+    grid.innerHTML += `
+      <div class="card ${isSelected?'selected':''}" onclick="selectCard(${idea.id})" id="card-${idea.id}">
+        <div class="card-header">
+          <div class="card-title">${idea.name}</div>
+          <div class="score-badge ${badgeClass}">${total}/20</div>
+        </div>
+        <div class="tag-row">${catTag}</div>
+        <div class="bar-row"><div class="bar-label">Free tier fit</div><div class="bar-track"><div class="bar-fill bar-fill-free" style="width:${s.free*20}%"></div></div><span style="font-size:11px;color:var(--color-text-secondary);width:12px">${s.free}</span></div>
+        <div class="bar-row"><div class="bar-label">2-week scope</div><div class="bar-track"><div class="bar-fill bar-fill-scope" style="width:${s.scope*20}%"></div></div><span style="font-size:11px;color:var(--color-text-secondary);width:12px">${s.scope}</span></div>
+        <div class="bar-row"><div class="bar-label">Novice-friendly</div><div class="bar-track"><div class="bar-fill bar-fill-novice" style="width:${s.novice*20}%"></div></div><span style="font-size:11px;color:var(--color-text-secondary);width:12px">${s.novice}</span></div>
+        <div class="bar-row"><div class="bar-label">Platform showcase</div><div class="bar-track"><div class="bar-fill bar-fill-platform" style="width:${s.platform*20}%"></div></div><span style="font-size:11px;color:var(--color-text-secondary);width:12px">${s.platform}</span></div>
+        <div class="card-desc">${idea.tagline}</div>
+      </div>
+    `;
+  });
+}
+
+function selectCard(id) {
+  if(selectedId === id) { selectedId = null; document.getElementById('detailPanel').innerHTML = ''; renderCards(); return; }
+  selectedId = id;
+  const idea = ideas.find(i => i.id === id);
+  renderCards();
+  const panel = document.getElementById('detailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <button class="close-btn" onclick="selectCard(${id})"><i class="ti ti-x" aria-hidden="true"></i> close</button>
+      <div class="detail-title">${idea.name}</div>
+      <div class="detail-subtitle">${idea.tagline}</div>
+      <div class="detail-grid">
+        <div class="detail-section">
+          <h4>Realistic v1 (week 1–2)</h4>
+          <ul>${idea.v1.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-section">
+          <h4>Things to cut from scope</h4>
+          <ul>${idea.avoid.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-section">
+          <h4>Strengths for your team</h4>
+          <ul>${idea.strengths.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-section">
+          <h4>Risks to watch</h4>
+          <ul>${idea.risks.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+renderCards();
+</script>
