@@ -18,7 +18,7 @@
   - [`Eng.Mon._envIF`](#engmon_envif)
 - [`Eng.AD` (Agent Decision)](#engad-agent-decision)
   - [`Eng.AD._FC` (Forecast Context)](#engad_fc-forecast-context)
-  - [`Eng.AD.buildFC` (Build Context)](#engadbuildfc-build-context)
+  - [`Eng.AD.buildFC` (Build Forecast Context)](#engadbuildfc-build-forecast-context)
     - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
   - [`Eng.AD.adReq` (Agent Decision Request)](#engadadreq-agent-decision-request)
   - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
@@ -73,7 +73,7 @@ Agent decision handler module, called by `Eng.Scheduler` every n ticks (configur
 ## `Eng.AD._FC` (Forecast Context)
 Context needed for the forecast model (serves as its primary input).
 
-## `Eng.AD.buildFC` (Build Context)
+## `Eng.AD.buildFC` (Build Forecast Context)
 Builds `Eng.AD._FC`. May need to interact with `Env`.
 
 > **NOTE**: Conceptually, `Eng.AD.buildFC` is asynchronous, i.e. it does not cause the monitoring loop to stop, although it does require `Eng.AD` to wait for it to respond. Practically, if there is no expected delay from `Eng.AD.buildFC` we can implement it as a synchronous part of the core engine loop managed by `Eng.Scheduler`, with `Eng.AD` checking for its response every tick or so. If the asynchronous approach is preferred (as it will may well be), we should ensure to add another component (e.g. `Eng.AD.buildFCResCheck`) that, if active is checks for `Eng.AD.buildFC`'s response every k ticks (ideally every tick), and that, upon receiving the response, deactivates until the next time `Eng.AD` is called by `Eng.Scheduler`.
