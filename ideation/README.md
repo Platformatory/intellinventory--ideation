@@ -112,4 +112,4 @@ To be decided.
 Out of scope.
 
 # Read Further
-- [`problem-statement-and-architecture.md`](./problem-statement-and-architecture.md)
+- [`problem-statement-and-architecture-proposal.md`](./problem-statement-and-architecture-proposal.md)
