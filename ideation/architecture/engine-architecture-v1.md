@@ -2,6 +2,8 @@
 
 > **Module code**: `Eng`
 
+> **Relevant context**: [`ideation/architecture/README.md`](./README.md)
+
 ---
 
 **Contents**:
