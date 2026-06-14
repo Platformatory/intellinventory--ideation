@@ -144,10 +144,8 @@ Queue to hold responses from `HITL`:
 # `Eng._D-2` (Engine Decision Object - V2)
 `HITL._D` after passing structural and logical validation.
 
-> **NOTE**: `HITL._D` is the response from `HITL`
-
 # `Eng.Exec` (Executor)
-Executes the decisions made via `Eng.Mon._envIF`.
+Executes the decisions in `Eng._D-2` via `Eng.Mon._envIF`.
 
 ## `Eng.Exec._envIF`
 Requirement for a 1-way interface with the environment for decision execution.
