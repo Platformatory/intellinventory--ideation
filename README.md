@@ -4,7 +4,7 @@
 
 > **Relevant repositories**:
 >
-> **See**: [`implementation` in the `main` branch](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--ideation/tree/main/implementation)
+> **See**: [`implementation` in the `main` branch](https://github.com/Platformatory/intellinventory--ideation/tree/main/implementation)
 
 ---
 
@@ -15,7 +15,7 @@ Directories:
 
 ---
 
-The following are in the [`main`](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--ideation/tree/main) branch:
+The following are in the [`main`](https://github.com/Platformatory/intellinventory--ideation/tree/main) branch:
 
 - `knowledgeBase`
 - `literature`
