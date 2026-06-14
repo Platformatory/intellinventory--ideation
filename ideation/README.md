@@ -66,3 +66,5 @@ Why?
 \[2026-05-08\]
 
 **See**: [`proposal-2--domain-specific--warehouse-reorder.md`](./proposal-2--domain-specific--warehouse-reorder.md)
+
+> **NOTE**: This is currently thought of as "inventory management" rather than "warehouse reorder".
