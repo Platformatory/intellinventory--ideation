@@ -15,17 +15,17 @@
 - [`Eng.AD` (Agent Decision)](#engad-agent-decision)
   - [`Eng._FC` (Forecast Context)](#eng_fc-forecast-context)
   - [`Eng.buildFC` (Build Context)](#engbuildfc-build-context)
-  - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
+    - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
   - [`Eng.AD.adReq` (Agent Decision Request)](#engadadreq-agent-decision-request)
-- [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
+  - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
   - [`Eng.AD.adResCheck` (Agent Decision Response Check)](#engadadrescheck-agent-decision-response-check)
 - [`Eng._D-1` (Engine Decision Object - V1)](#eng_d-1-engine-decision-object---v1)
 - [`Eng.HD` (Human Decision)](#enghd-human-decision)
   - [`Eng.HD.hdReq` (Human Decision Request)](#enghdhdreq-human-decision-request)
   - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue-1)
   - [`Eng.HD.hdResCheck` (Human Decision Response Check)](#enghdhdrescheck-human-decision-response-check)
-  - [`Eng.Mon._envIF`](#engmon_envif-1)
 - [`Eng.Exec` (Executor)](#engexec-executor)
+  - [`Eng.Exec._envIF`](#engexec_envif)
 
 ---
 
@@ -66,7 +66,7 @@ Context needed for the forecast model (serves as its primary input).
 ## `Eng.buildFC` (Build Context)
 Builds `Eng._FC`. May need to interact with `Env`.
 
-## `Eng.AD.buildFC._envIF`
+### `Eng.AD.buildFC._envIF`
 Requirement for a 2-way interface with the environment for building `Eng._FC`.
 
 ## `Eng.AD.adReq` (Agent Decision Request)
@@ -82,7 +82,7 @@ Requirement for a 2-way interface with the environment for building `Eng._FC`.
 >
 > Currently, we are likely to pursue approach 1 due to its ease.
 
-# `Eng.AD.Q` (Agent Decision Response Queue)
+## `Eng.AD.Q` (Agent Decision Response Queue)
 Queue to hold responses from `RM`:
 
 - Stores the newest decisions at its queue head
@@ -137,8 +137,8 @@ Queue to hold responses from `HITL`:
 - Activates upon `Eng.HD.hdReq` trigger
 - Deactivates once response from `HITL` is received
 
-## `Eng.Mon._envIF`
-Requirement for a 1-way interface with the environment for decision execution.
-
 # `Eng.Exec` (Executor)
 Executes the decisions made via `Eng.Mon._envIF`.
+
+## `Eng.Exec._envIF`
+Requirement for a 1-way interface with the environment for decision execution.
