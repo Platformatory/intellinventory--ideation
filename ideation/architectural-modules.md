@@ -39,6 +39,12 @@
 | Hyphen + Number | Version |
 
 # `Eng` (Engine)
+Diagram (details are given in the following sections)
+
+![](./_resources/engine-architecture-v1.png)
+
+> Editable XML file for the diagram: [`ideation/_resources/engine-architecture-v1.drawio`](./_resources/engine-architecture-v1.drawio)
+
 ## `Eng.Scheduler` (Scheduler)
 Core loop of the engine that:
 
