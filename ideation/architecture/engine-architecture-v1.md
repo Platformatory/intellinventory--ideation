@@ -30,7 +30,7 @@
 ---
 
 # Diagram
-Diagram (details are given in the following sections)
+> **NOTE**: Details are given in the following sections.
 
 ![](../_resources/engine-architecture-v1.png)
 
