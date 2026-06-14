@@ -21,7 +21,7 @@
 ---
 
 # Feedback on Phase 1 to Work on
-> **`phase-1` branch for reference**: [`phase-1`](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--ideation/tree/phase-1)
+> **`phase-1` branch for reference**: [`phase-1`](https://github.com/Platformatory/intellinventory--ideation/tree/phase-1)
 
 ## Terminology Revision
 Terminology must be revised:
@@ -72,7 +72,7 @@ Potentially more valuable use-case:
 ## POINT: Need for Tighter Control in Financial Decisions
 **Context**:
 
-For ensuring tight governance of decision-making format, constraint definition and constraint fulfillment, we have established a separation between the AI layer and the programmatic layer (see: [`__docs__/reasoningIntegrationSpecs-1.md` in `warriorsofnoobia/dbx-agentic-ai-project--warehouse-sim`, **github.com**](https://github.com/warriorsofnoobia/dbx-agentic-ai-project--warehouse-sim/blob/main/__docs__/reasoningIntegrationSpecs-1.md)). While the exact architecture needs refinement, the overarching idea of the separation - between the programmatic layer handling the actual interactions with the environment (data tables, reordering APIs, etc.) and the AI layer handling reasoning - our chosen approach.
+For ensuring tight governance of decision-making format, constraint definition and constraint fulfillment, we have established a separation between the AI layer and the programmatic layer (see: [`__docs__/reasoningIntegrationSpecs-1.md` in `Platformatory/intellinventory--warehouse-sim`, **github.com**](https://github.com/Platformatory/intellinventory--warehouse-sim/blob/main/__docs__/reasoningIntegrationSpecs-1.md)). While the exact architecture needs refinement, the overarching idea of the separation - between the programmatic layer handling the actual interactions with the environment (data tables, reordering APIs, etc.) and the AI layer handling reasoning - our chosen approach.
 
 **Suggested direction**:
 
