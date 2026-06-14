@@ -32,6 +32,10 @@
   - [`Eng.Exec._envIF`](#engexec_envif)
 - [Remarks](#remarks)
   - [Separation between `Eng.AD <-> Eng.AD.buildContext` \& `Eng.AD.adReq`](#separation-between-engad---engadbuildcontext--engadadreq)
+  - [Considerations for `Eng.Mon`](#considerations-for-engmon)
+    - [Potential Uses](#potential-uses)
+    - [Do We Need It?](#do-we-need-it)
+  - [Decisions about Asynchronous Awaiting](#decisions-about-asynchronous-awaiting)
 
 ---
 
@@ -159,3 +163,35 @@ Requirement for a 1-way interface with the environment for decision execution.
 Consider whether `Eng.AD.adReq` should itself handle the request-response to and from `Eng.AD.buildContext`, or whether a separation between this handling and the sending of a request to `RM` is valid. Conceptually, this separation is cleaner, as we have the different request-response lines distributed to separate components, with no single component managing more than one request-response line. The practical implementation of this, however, may involve some consolidation of these functionalities into a single function, i.e. a single function that handles the request-response to and from `Eng.AD.buildContext`, and upon receiving a response, triggers the sending of a request to the `RM`.
 
 > **NOTE**: This component was initially conceptualised as the entrypoint to `Eng.AD`, but the architecture has shifted since then, so this separation is sort of a relic of the previous architectural ideas. Nonetheless, the point about conceptual clarity remains, which is why this is a point of consideration.
+
+## Considerations for `Eng.Mon`
+Currently, `Eng.Mon` is practically unused as a module.
+
+*However, there are multiple directions this module could be developed.*
+
+
+### Potential Uses
+**Event-based decision-making calls**:
+
+`Eng.Mon` could serve as the event-recognition module that then calls `Eng.AD` based on event-based logic. Currently, `Eng.AD` is called on a pre-set schedule, which is logically much more straightforward. But this also makes this use of `Eng.Mon` irrelevant. That being said, it is worth considering an event-based approach for calling `Eng.AD`.
+
+**Pre-storing forecasting context-related data**:
+
+`Eng.Mon` could be a way of storing data relevant for building forecasting context. This way, `Eng.AD.buildFC` can rely on this data and focus on querying only other kinds of data, thereby simplifying `Eng.AD.buildFC._envIF`. Furthermore, with some modifications to how `Eng.Mon` works (e.g. instead of a synchronous request-response approach, we can make `Eng.Mon` send multiple data requests and await them asynchronously across ticks), `Eng.Mon` could prove to be the sole data source for `Eng.AD.buildFC`, especially if we want to minimise ldecision-making atency due to queries.
+
+### Do We Need It?
+However, the bigger question is whether we need `Eng.Mon` at all, considering:
+
+- We are calling `Eng.Mon` on a schedule
+- `Eng.AD.buildFC` may not need `Eng.Mon` at all for building `Eng.AD._FC`
+- Querying data tables within `Env` is not expensive w.r.t. time and cost
+
+We should not, however, that we are currently working in a simulation setup, which offers some options for simplification that may not be available in a production-level environment (e.g. there are no constraints regarding data table queries, an engine tick can be made to match a simulation tick exactly, etc.). Hence, we should design the architecture for a production-level environment, simplifying only in the implementation if needed, with clear flagging of the simplifications.
+
+## Decisions about Asynchronous Awaiting
+Conceptually, the following may need to work asynchronously:
+
+- `Eng.AD.buildFC`
+- `Eng.Exec`
+
+See their respective sections for clarity.
