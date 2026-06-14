@@ -35,7 +35,7 @@
   - [Considerations for `Eng.Mon`](#considerations-for-engmon)
     - [Potential Uses](#potential-uses)
     - [Do We Need It?](#do-we-need-it)
-  - [Decisions about Asynchronous Awaiting](#decisions-about-asynchronous-awaiting)
+  - [Decisions about Asynchronous Components](#decisions-about-asynchronous-components)
 
 ---
 
@@ -188,7 +188,7 @@ However, the bigger question is whether we need `Eng.Mon` at all, considering:
 
 We should not, however, that we are currently working in a simulation setup, which offers some options for simplification that may not be available in a production-level environment (e.g. there are no constraints regarding data table queries, an engine tick can be made to match a simulation tick exactly, etc.). Hence, we should design the architecture for a production-level environment, simplifying only in the implementation if needed, with clear flagging of the simplifications.
 
-## Decisions about Asynchronous Awaiting
+## Decisions about Asynchronous Components
 Conceptually, the following may need to work asynchronously:
 
 - `Eng.AD.buildFC`
