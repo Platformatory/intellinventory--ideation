@@ -117,4 +117,4 @@ We must have sufficient information about:
 - Preservation of decisions before and after human edits <br> ... *to ensure we can still validate the system's performance apart from the human*
 
 # Additional Resources
-- [`ideation/_resources/proposed-architecture-draft--2026-06-12.jpeg`](./_resources/proposed-architecture-draft--2026-06-12.jpeg)
+- [`ideation/_resources/architecture-proposal-draft--2026-06-12.jpeg`](./_resources/architecture-proposal-draft--2026-06-12.jpeg)
