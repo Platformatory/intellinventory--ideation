@@ -16,8 +16,8 @@
 - [`Eng.Mon` (Monitoring)](#engmon-monitoring)
   - [`Eng.Mon._envIF`](#engmon_envif)
 - [`Eng.AD` (Agent Decision)](#engad-agent-decision)
-  - [`Eng._FC` (Forecast Context)](#eng_fc-forecast-context)
-  - [`Eng.buildFC` (Build Context)](#engbuildfc-build-context)
+  - [`Eng.AD._FC` (Forecast Context)](#engad_fc-forecast-context)
+  - [`Eng.AD.buildFC` (Build Context)](#engadbuildfc-build-context)
     - [`Eng.AD.buildFC._envIF`](#engadbuildfc_envif)
   - [`Eng.AD.adReq` (Agent Decision Request)](#engadadreq-agent-decision-request)
   - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue)
@@ -64,18 +64,22 @@ Requirement for a 2-way interface with the environment for:
 - Push approach data collection
 
 # `Eng.AD` (Agent Decision)
-## `Eng._FC` (Forecast Context)
+Agent decision handler module, called by `Eng.Scheduler` every n ticks (configurable).
+
+## `Eng.AD._FC` (Forecast Context)
 Context needed for the forecast model (serves as its primary input).
 
-## `Eng.buildFC` (Build Context)
-Builds `Eng._FC`. May need to interact with `Env`.
+## `Eng.AD.buildFC` (Build Context)
+Builds `Eng.AD._FC`. May need to interact with `Env`.
+
+> **NOTE**: Conceptually, `Eng.AD.buildFC` is asynchronous, i.e. it does not cause the monitoring loop to stop, although it does require `Eng.AD` to wait for it to respond. Practically, if there is no expected delay from `Eng.AD.buildFC` we can implement it as a synchronous part of the core engine loop managed by `Eng.Scheduler`, with `Eng.AD` checking for its response every tick or so. If the asynchronous approach is preferred (as it will may well be), we should ensure to add another component (e.g. `Eng.AD.buildFCResCheck`) that, if active is checks for `Eng.AD.buildFC`'s response every k ticks (ideally every tick), and that, upon receiving the response, deactivates until the next time `Eng.AD` is called by `Eng.Scheduler`.
 
 ### `Eng.AD.buildFC._envIF`
-Requirement for a 2-way interface with the environment for building `Eng._FC`.
+Requirement for a 2-way interface with the environment for building `Eng.AD._FC`.
 
 ## `Eng.AD.adReq` (Agent Decision Request)
-- Asynchronous
-- Triggered per n engine ticks (configurable)
+- Triggered upon receiving `Eng.AD._FC`
+- Sends a request to `RM` without waiting for response
 
 > **NOTE**: If `Eng.AD.adResCheck` is not active, there are 2 approaches:
 >
@@ -95,11 +99,10 @@ Queue to hold responses from `RM`:
 > **NOTE**: Deletion upon consume is ideal as decisions need not be repeated.
 
 ## `Eng.AD.adResCheck` (Agent Decision Response Check)
-- Synchronous
-- Reads from the queue tail of `Eng.AD.Q`
-- High-to-medium frequency (ideally per engine tick)
 - Activates upon `Eng.AD.adReq` trigger
-- Deactivates once required responses from `RM` is received; required responses are:
+- Attempts to obtain an item from the queue tail of `Eng.AD.Q`
+- High-to-medium frequency (ideally per engine tick)
+- Deactivates once the item with the required responses from `RM` is received <br> *Required responses are*...
   - `RM._AD` (agent decisions)
   - `RM._ADR` (agent decision reasoning (human-readable))
 
