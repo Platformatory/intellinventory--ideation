@@ -4,7 +4,9 @@
 
 ---
 
-**Phase 2**
+<h2>Phase 2</h2>
+
+---
 
 > **Relevant repositories**:
 >
