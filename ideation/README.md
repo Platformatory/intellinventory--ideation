@@ -106,7 +106,7 @@ Promising references:
 - [*AI Agents in Supply Chain Management: Automating Inventory and Demand Forecasting*, **onereach.ai/blog**](https://onereach.ai/blog/ai-agents-in-supply-chain-inventory-and-forecasting-automation/)
 
 ## POINT: Clarify Specific Use-Cases
-To be decided.
+**See**: ["What Good Is Agentic AI w.r.t. Inventory Management?", `ideation/problem-statement-and-architecture-proposal.md`](./problem-statement-and-architecture-proposal.md#what-good-is-agentic-ai-wrt-inventory-management)
 
 ## POINT: Potential Direction: Control-Tower Decisions
 Out of scope.
