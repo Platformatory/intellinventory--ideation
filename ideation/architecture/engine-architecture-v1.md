@@ -25,7 +25,7 @@
 - [`Eng._D-1` (Engine Decision Object - V1)](#eng_d-1-engine-decision-object---v1)
 - [`Eng.HD` (Human Decision)](#enghd-human-decision)
   - [`Eng.HD.hdReq` (Human Decision Request)](#enghdhdreq-human-decision-request)
-  - [`Eng.AD.Q` (Agent Decision Response Queue)](#engadq-agent-decision-response-queue-1)
+  - [`Eng.HD.Q` (Human Decision Response Queue)](#enghdq-human-decision-response-queue)
   - [`Eng.HD.hdResCheck` (Human Decision Response Check)](#enghdhdrescheck-human-decision-response-check)
 - [`Eng._D-2` (Engine Decision Object - V2)](#eng_d-2-engine-decision-object---v2)
 - [`Eng.Exec` (Executor)](#engexec-executor)
@@ -126,7 +126,7 @@ Consolidated `RM._AD` and `RM._ADR` after:
 > - All agent decisions will be reviewed by the human, despite human delay
 > - 1 or more agent decisions can be edited/cancelled by the human as a batch
 
-## `Eng.AD.Q` (Agent Decision Response Queue)
+## `Eng.HD.Q` (Human Decision Response Queue)
 Queue to hold responses from `HITL`:
 
 - Stores the newest decisions at its queue head
