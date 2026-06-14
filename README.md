@@ -1,4 +1,4 @@
-# Databricks Agentic AI Project
+<h1>Intellinventory</h1>
 
 *Inventory management intelligence via Databricks-native agentic AI.*
 
